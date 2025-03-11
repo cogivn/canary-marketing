@@ -42,8 +42,14 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
     alt = altFromResource || ''
 
     const cacheTag = resource.updatedAt
-
-    src = `${getClientSideURL()}${url}?${cacheTag}`
+    
+    // Check if the URL is already absolute
+    if (url.startsWith('http')) {
+      src = `${url}?${cacheTag}`
+    } else {
+      // Only prepend the client URL if it's a relative path
+      src = `${getClientSideURL()}${url}?${cacheTag}`
+    }
   }
 
   const loading = loadingFromProps || (!priority ? 'lazy' : undefined)

@@ -1,6 +1,7 @@
 // storage-adapter-import-placeholder
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
-
+import { adminAuthPlugin } from "payload-auth-plugin";
+import { GoogleAuthProvider } from "payload-auth-plugin/providers";
 import sharp from 'sharp' // sharp-import
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
@@ -21,6 +22,7 @@ const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
+  serverURL: process.env.NEXT_PUBLIC_SERVER_URL,
   admin: {
     components: {
       // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
@@ -29,6 +31,7 @@ export default buildConfig({
       // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
       // Feel free to delete this at any time. Simply remove the line below and the import `BeforeDashboard` statement on line 15.
       beforeDashboard: ['@/components/BeforeDashboard'],
+      afterLogin: ['@/components/Auth'],
     },
     importMap: {
       baseDir: path.resolve(dirname),
@@ -69,7 +72,14 @@ export default buildConfig({
   globals: [Header, Footer],
   plugins: [
     ...plugins,
-    // storage-adapter-placeholder
+    adminAuthPlugin({
+      providers: [
+        GoogleAuthProvider({
+          client_id: process.env.GOOGLE_PROVIDER_CLIENT_ID as string,
+          client_secret: process.env.GOOGLE_PROVIDER_CLIENT_SECRET as string,
+        }),
+      ],
+    }),
   ],
   secret: process.env.PAYLOAD_SECRET,
   sharp,
