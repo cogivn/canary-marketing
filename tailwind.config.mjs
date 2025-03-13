@@ -3,6 +3,7 @@ import typography from '@tailwindcss/typography'
 
 /** @type {import('tailwindcss').Config} */
 const config = {
+  important: true,
   content: [
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',

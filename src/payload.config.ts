@@ -2,6 +2,8 @@
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { adminAuthPlugin } from "payload-auth-plugin";
 import { GoogleAuthProvider } from "payload-auth-plugin/providers";
+import auditLogPlugin from "@rumess/payload-audit-log";
+
 import sharp from 'sharp' // sharp-import
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
@@ -22,7 +24,7 @@ const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
-  serverURL: process.env.NEXT_PUBLIC_SERVER_URL,
+  serverURL: getServerSideURL(),
   admin: {
     components: {
       // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
@@ -80,6 +82,11 @@ export default buildConfig({
         }),
       ],
     }),
+    // Audit Log Plugin
+    auditLogPlugin({
+      collections: ["posts", "accounts"],
+      includeAuth: true,
+  }),
   ],
   secret: process.env.PAYLOAD_SECRET,
   sharp,
